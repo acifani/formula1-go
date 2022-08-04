@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/acifani/formula1-go/internal/ui"
+	"github.com/acifani/formula1-go/internal/ui/program"
 )
 
 var (
@@ -18,7 +19,7 @@ var (
 		Long:                  styles.Paragraph.Render("Run without arguments for a TUI or use the sub-commands like a pro."),
 		DisableFlagsInUseLine: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return ui.NewProgram().Start()
+			return program.New(styles).Start()
 		},
 	}
 )

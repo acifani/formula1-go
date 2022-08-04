@@ -1,14 +1,15 @@
-package ui
+package results
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/evertras/bubble-table/table"
 
+	"github.com/acifani/formula1-go/internal/ui"
 	"github.com/acifani/formula1-go/pkg/api"
 )
 
 type model struct {
-	styles Styles
+	styles ui.Styles
 	err    error
 	table  table.Model
 }
@@ -27,10 +28,8 @@ const (
 	columnsKeyTime    = "gap"
 )
 
-func NewProgram(styles Styles) *tea.Program {
-	return tea.NewProgram(model{
-		styles: styles,
-	})
+func NewModel() tea.Model {
+	return model{}
 }
 
 func (m model) Init() tea.Cmd {
