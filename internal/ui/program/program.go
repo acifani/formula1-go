@@ -2,6 +2,7 @@ package program
 
 import (
 	"github.com/acifani/formula1-go/internal/ui"
+	"github.com/acifani/formula1-go/internal/ui/driver"
 	"github.com/acifani/formula1-go/internal/ui/results"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -16,14 +17,15 @@ type Page = int
 type model struct {
 	page    Page
 	styles  ui.Styles
-	results tea.Model
+	results results.Model
+	driver  driver.Model
 }
 
 func New(styles ui.Styles) *tea.Program {
 	return tea.NewProgram(model{
 		page:    pageResults,
 		styles:  styles,
-		results: results.NewModel(),
+		results: results.New(styles),
 	})
 }
 
@@ -43,11 +45,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case tea.KeyCtrlC, tea.KeyEsc:
 			cmds = append(cmds, tea.Quit)
 		}
+	case driver.InitDriverMsg:
+		m.page = pageDriverInfo
 	}
 
 	switch m.page {
 	case pageResults:
 		m.results, cmd = m.results.Update(msg)
+		cmds = append(cmds, cmd)
+	case pageDriverInfo:
+		m.driver, cmd = m.driver.Update(msg)
 		cmds = append(cmds, cmd)
 	}
 
@@ -58,6 +65,8 @@ func (m model) View() string {
 	switch m.page {
 	case pageResults:
 		return m.results.View()
+	case pageDriverInfo:
+		return m.driver.View()
 	}
 
 	return ""

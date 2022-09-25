@@ -75,3 +75,29 @@ type RaceTable struct {
 		} `json:"Results"`
 	} `json:"Races"`
 }
+
+type DriverInfo struct {
+	MRData struct {
+		Xmlns       string `json:"xmlns"`
+		Series      string `json:"series"`
+		URL         string `json:"url"`
+		Limit       string `json:"limit"`
+		Offset      string `json:"offset"`
+		Total       string `json:"total"`
+		DriverTable struct {
+			DriverID string   `json:"driverId"`
+			Drivers  []Driver `json:"Drivers"`
+		} `json:"DriverTable"`
+	} `json:"MRData"`
+}
+
+type Driver struct {
+	DriverID        string `json:"driverId"`
+	PermanentNumber string `json:"permanentNumber"`
+	Code            string `json:"code"`
+	URL             string `json:"url"`
+	GivenName       string `json:"givenName"`
+	FamilyName      string `json:"familyName"`
+	DateOfBirth     string `json:"dateOfBirth"`
+	Nationality     string `json:"nationality"`
+}

@@ -5,10 +5,11 @@ import (
 	"github.com/evertras/bubble-table/table"
 
 	"github.com/acifani/formula1-go/internal/ui"
+	"github.com/acifani/formula1-go/internal/ui/driver"
 	"github.com/acifani/formula1-go/pkg/api"
 )
 
-type model struct {
+type Model struct {
 	styles ui.Styles
 	err    error
 	table  table.Model
@@ -26,17 +27,18 @@ const (
 	columnKeyPoints   = "points"
 	columnKeyStatus   = "status"
 	columnsKeyTime    = "gap"
+	columnKeyDriverID = "driverId"
 )
 
-func NewModel() tea.Model {
-	return model{}
+func New(styles ui.Styles) Model {
+	return Model{styles: styles}
 }
 
-func (m model) Init() tea.Cmd {
+func (m Model) Init() tea.Cmd {
 	return fetchRows
 }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	var (
 		cmd  tea.Cmd
 		cmds []tea.Cmd
@@ -50,6 +52,12 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.Type {
 		case tea.KeyCtrlC, tea.KeyEsc:
 			cmds = append(cmds, tea.Quit)
+		case tea.KeyEnter:
+			row := m.table.HighlightedRow()
+			cmds = append(
+				cmds,
+				driver.Init(row.Data[columnKeyDriverID].(string)),
+			)
 		}
 	case fetchDone:
 		if msg.err != nil {
@@ -62,14 +70,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				table.NewColumn(columnKeyStatus, "Status", 15),
 				table.NewColumn(columnsKeyTime, "Time", 12),
 				table.NewColumn(columnKeyPoints, "Pts", 4),
-			}).WithRows(generateRows(msg.data))
+			}).WithRows(generateRows(msg.data)).Focused(true)
 		}
 	}
 
 	return m, tea.Batch(cmds...)
 }
 
-func (m model) View() string {
+func (m Model) View() string {
 	if m.err != nil {
 		return m.styles.Paragraph.Render(m.err.Error())
 	}
@@ -93,6 +101,9 @@ func generateRows(results *api.RaceTable) []table.Row {
 			columnKeyStatus:   result.Status,
 			columnsKeyTime:    result.Time.Time,
 			columnKeyPoints:   result.Points,
+
+			// Metadata
+			columnKeyDriverID: result.Driver.DriverID,
 		}))
 	}
 
