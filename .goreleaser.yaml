@@ -1,0 +1,14 @@
+builds:
+  - main: ./cmd/f1go
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - format_overrides:
+      - goos: windows
+        format: zip
