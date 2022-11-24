@@ -63,14 +63,20 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 		if msg.err != nil {
 			m.err = msg.err
 		} else {
-			m.table = table.New([]table.Column{
+			race := msg.data.Races[0]
+			columns := []table.Column{
 				table.NewColumn(columnKeyPosition, "#", 4),
 				table.NewColumn(columnKeyDriver, "Driver", 20),
 				table.NewColumn(columnKeyTeam, "Team", 20),
 				table.NewColumn(columnKeyStatus, "Status", 15),
 				table.NewColumn(columnsKeyTime, "Time", 12),
 				table.NewColumn(columnKeyPoints, "Pts", 4),
-			}).WithRows(generateRows(msg.data)).Focused(true)
+			}
+
+			m.table = table.New(columns).
+				WithRows(generateRows(msg.data)).
+				Focused(true).
+				WithStaticFooter(race.RaceName + " - " + race.Date + " - Press Enter to view driver details")
 		}
 	}
 
