@@ -27,9 +27,14 @@ func New(styles ui.Styles) page.Model {
 		{Title: "Pts", Width: 4},
 		{Title: "Wins", Width: 4},
 	}
-	table := table.New(table.WithColumns(columns))
+	t := table.New(table.WithColumns(columns))
+	t.SetStyles(styles.Table)
 
-	return &model{table: table, styles: styles}
+	return &model{table: t, styles: styles}
+}
+
+func (m model) GetPageTitle() string {
+	return "Driver Standings"
 }
 
 func (m model) Init() tea.Cmd {

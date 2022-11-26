@@ -1,28 +1,46 @@
 package ui
 
 import (
+	"github.com/charmbracelet/bubbles/table"
 	"github.com/charmbracelet/lipgloss"
 )
 
 var (
-	indigo       = lipgloss.AdaptiveColor{Light: "#5A56E0", Dark: "#7571F9"}
-	subtleIndigo = lipgloss.AdaptiveColor{Light: "#7D79F6", Dark: "#514DC1"}
-	cream        = lipgloss.AdaptiveColor{Light: "#FFFDF5", Dark: "#FFFDF5"}
-	fuschia      = lipgloss.AdaptiveColor{Light: "#EE6FF8", Dark: "#EE6FF8"}
-	green        = lipgloss.Color("#04B575")
-	red          = lipgloss.AdaptiveColor{Light: "#FF4672", Dark: "#ED567A"}
-	faintRed     = lipgloss.AdaptiveColor{Light: "#FF6F91", Dark: "#C74665"}
+	borderColor = lipgloss.Color("240")
+	purple      = lipgloss.Color("57")
+	cream       = lipgloss.Color("229")
 )
 
 type Styles struct {
-	Wrap, Paragraph, Keyword lipgloss.Style
+	Wrap, Paragraph, Base, Title lipgloss.Style
+	Table, SelectableTable       table.Styles
 }
 
 func NewStyles() Styles {
 	s := Styles{}
 	s.Wrap = lipgloss.NewStyle().Width(58)
 	s.Paragraph = s.Wrap.Copy().Margin(1, 0, 1, 2)
-	s.Keyword = lipgloss.NewStyle().Foreground(green)
+	s.Title = lipgloss.NewStyle().Margin(1, 0, 0, 1).Padding(0, 1).Background(purple).Bold(true)
+
+	s.Base = lipgloss.NewStyle().
+		BorderStyle(lipgloss.NormalBorder()).
+		BorderForeground(borderColor).
+		Margin(1, 0)
+
+	s.Table = table.DefaultStyles()
+	s.Table.Header = s.Table.Header.
+		BorderStyle(lipgloss.NormalBorder()).
+		BorderForeground(borderColor).
+		BorderBottom(true)
+	s.Table.Selected = s.Table.Selected.
+		UnsetForeground().
+		UnsetBackground().
+		Bold(false)
+
+	s.SelectableTable = s.Table
+	s.SelectableTable.Selected = s.SelectableTable.Selected.Copy().
+		Foreground(cream).
+		Background(purple)
 
 	return s
 }

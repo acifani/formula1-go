@@ -34,9 +34,14 @@ func New(styles ui.Styles) page.Model {
 		{Title: "Quali Time", Width: 20},
 		{Title: "Race Time", Width: 20},
 	}
-	table := table.New(table.WithColumns(columns), table.WithFocused(true))
+	t := table.New(table.WithColumns(columns), table.WithFocused(true))
+	t.SetStyles(styles.SelectableTable)
 
-	return &model{table: table, styles: styles}
+	return &model{table: t, styles: styles}
+}
+
+func (m model) GetPageTitle() string {
+	return "Season Schedule"
 }
 
 func (m model) Init() tea.Cmd {

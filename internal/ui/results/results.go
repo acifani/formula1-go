@@ -9,9 +9,10 @@ import (
 )
 
 type model struct {
-	table  table.Model
-	styles ui.Styles
-	err    error
+	raceName string
+	table    table.Model
+	styles   ui.Styles
+	err      error
 }
 
 type LoadDone struct {
@@ -30,9 +31,14 @@ func New(styles ui.Styles) page.Model {
 		{Title: "Time", Width: 12},
 		{Title: "Pts", Width: 4},
 	}
-	table := table.New(table.WithColumns(columns))
+	t := table.New(table.WithColumns(columns))
+	t.SetStyles(styles.Table)
 
-	return &model{table: table, styles: styles}
+	return &model{table: t, styles: styles}
+}
+
+func (m model) GetPageTitle() string {
+	return m.raceName + " results"
 }
 
 func (m model) Init() tea.Cmd {
@@ -52,6 +58,7 @@ func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 		if msg.err != nil {
 			m.err = msg.err
 		}
+		m.raceName = msg.data.Races[0].RaceName
 		rows := generateRows(msg.data)
 		m.table.SetHeight(len(rows))
 		m.table.SetRows(rows)

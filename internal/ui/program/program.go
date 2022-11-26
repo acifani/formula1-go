@@ -101,7 +101,11 @@ func (m *model) View() string {
 
 	helpView := m.help.View(m.keys)
 
-	return currentPageView + "\n" + helpView
+	pageTitle := "formula1-go"
+	if currentPageModel != nil {
+		pageTitle = currentPageModel.GetPageTitle()
+	}
+	return m.styles.Title.Render(pageTitle) + m.styles.Base.Render(currentPageView) + "\n" + helpView
 }
 
 func (m *model) getCurrentPageModel() page.Model {
