@@ -149,3 +149,58 @@ type ConstructorStandingsTable struct {
 		} `json:"ConstructorStandings"`
 	} `json:"StandingsLists"`
 }
+
+type ScheduleResponse struct {
+	MRData struct {
+		Xmlns     string        `json:"xmlns"`
+		Series    string        `json:"series"`
+		URL       string        `json:"url"`
+		Limit     string        `json:"limit"`
+		Offset    string        `json:"offset"`
+		Total     string        `json:"total"`
+		RaceTable ScheduleTable `json:"RaceTable"`
+	} `json:"MRData"`
+}
+
+type ScheduleTable struct {
+	Season string `json:"season"`
+	Races  []struct {
+		Season   string `json:"season"`
+		Round    string `json:"round"`
+		URL      string `json:"url"`
+		RaceName string `json:"raceName"`
+		Circuit  struct {
+			CircuitID   string `json:"circuitId"`
+			URL         string `json:"url"`
+			CircuitName string `json:"circuitName"`
+			Location    struct {
+				Lat      string `json:"lat"`
+				Long     string `json:"long"`
+				Locality string `json:"locality"`
+				Country  string `json:"country"`
+			} `json:"Location"`
+		} `json:"Circuit"`
+		Date          string `json:"date"`
+		Time          string `json:"time"`
+		FirstPractice struct {
+			Date string `json:"date"`
+			Time string `json:"time"`
+		} `json:"FirstPractice"`
+		SecondPractice struct {
+			Date string `json:"date"`
+			Time string `json:"time"`
+		} `json:"SecondPractice"`
+		ThirdPractice struct {
+			Date string `json:"date"`
+			Time string `json:"time"`
+		} `json:"ThirdPractice,omitempty"`
+		Qualifying struct {
+			Date string `json:"date"`
+			Time string `json:"time"`
+		} `json:"Qualifying"`
+		Sprint struct {
+			Date string `json:"date"`
+			Time string `json:"time"`
+		} `json:"Sprint,omitempty"`
+	} `json:"Races"`
+}

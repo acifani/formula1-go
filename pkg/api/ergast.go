@@ -34,6 +34,15 @@ func GetCurrentConstructorStandings() (*ConstructorStandingsTable, error) {
 	return &result.MRData.StandingsTable, nil
 }
 
+func GetCurrentSeasonSchedule() (*ScheduleTable, error) {
+	result := ScheduleResponse{}
+	err := apiCall("/current.json", &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result.MRData.RaceTable, nil
+}
+
 func apiCall(url string, v interface{}) error {
 	res, err := http.Get(baseURL + url)
 	if err != nil {
