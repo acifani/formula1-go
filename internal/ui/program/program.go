@@ -5,6 +5,8 @@ import (
 	"github.com/acifani/formula1-go/internal/ui/driver"
 	"github.com/acifani/formula1-go/internal/ui/page"
 	"github.com/acifani/formula1-go/internal/ui/results"
+	"github.com/charmbracelet/bubbles/help"
+	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -18,12 +20,16 @@ type Page = int8
 type model struct {
 	currentPage Page
 	pageModels  map[Page]page.Model
+	help        help.Model
+	keys        keyMap
 	styles      ui.Styles
 }
 
 func New(styles ui.Styles) *tea.Program {
 	return tea.NewProgram(&model{
 		currentPage: pageResults,
+		help:        help.New(),
+		keys:        keys,
 		styles:      styles,
 	})
 }
@@ -45,9 +51,13 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	)
 
 	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		m.help.Width = msg.Width
 	case tea.KeyMsg:
-		switch msg.Type {
-		case tea.KeyCtrlC, tea.KeyEsc:
+		switch {
+		case key.Matches(msg, m.keys.Help):
+			m.help.ShowAll = !m.help.ShowAll
+		case key.Matches(msg, m.keys.Quit):
 			cmds = append(cmds, tea.Quit)
 		}
 	case driver.DriverLoadedMsg:
@@ -66,11 +76,14 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m *model) View() string {
 	currentPageModel := m.getCurrentPageModel()
+	currentPageView := ""
 	if currentPageModel != nil {
-		return currentPageModel.View()
+		currentPageView = currentPageModel.View()
 	}
 
-	return ""
+	helpView := m.help.View(m.keys)
+
+	return currentPageView + "\n" + helpView
 }
 
 func (m *model) getCurrentPageModel() page.Model {
