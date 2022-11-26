@@ -1,18 +1,17 @@
 package results
 
 import (
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/evertras/bubble-table/table"
-
 	"github.com/acifani/formula1-go/internal/ui"
 	"github.com/acifani/formula1-go/internal/ui/page"
 	"github.com/acifani/formula1-go/pkg/api"
+	"github.com/charmbracelet/bubbles/table"
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 type model struct {
+	table  table.Model
 	styles ui.Styles
 	err    error
-	table  table.Model
 }
 
 type fetchDone struct {
@@ -20,18 +19,18 @@ type fetchDone struct {
 	data *api.RaceTable
 }
 
-const (
-	columnKeyPosition = "position"
-	columnKeyDriver   = "driver"
-	columnKeyTeam     = "team"
-	columnKeyPoints   = "points"
-	columnKeyStatus   = "status"
-	columnsKeyTime    = "gap"
-	columnKeyDriverID = "driverId"
-)
-
 func New(styles ui.Styles) page.Model {
-	return &model{styles: styles}
+	columns := []table.Column{
+		{Title: "#", Width: 4},
+		{Title: "Driver", Width: 25},
+		{Title: "Team", Width: 20},
+		{Title: "Status", Width: 15},
+		{Title: "Time", Width: 12},
+		{Title: "Pts", Width: 4},
+	}
+	table := table.New(table.WithColumns(columns))
+
+	return &model{table: table, styles: styles}
 }
 
 func (m model) Init() tea.Cmd {
@@ -39,35 +38,21 @@ func (m model) Init() tea.Cmd {
 }
 
 func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
-	var (
-		cmd  tea.Cmd
-		cmds []tea.Cmd
-	)
-	m.table, cmd = m.table.Update(msg)
-	cmds = append(cmds, cmd)
+	var cmd tea.Cmd
 
 	switch msg := msg.(type) {
 	case fetchDone:
 		if msg.err != nil {
 			m.err = msg.err
-		} else {
-			race := msg.data.Races[0]
-			columns := []table.Column{
-				table.NewColumn(columnKeyPosition, "#", 4),
-				table.NewColumn(columnKeyDriver, "Driver", 20),
-				table.NewColumn(columnKeyTeam, "Team", 20),
-				table.NewColumn(columnKeyStatus, "Status", 15),
-				table.NewColumn(columnsKeyTime, "Time", 12),
-				table.NewColumn(columnKeyPoints, "Pts", 4),
-			}
-
-			m.table = table.New(columns).
-				WithRows(generateRows(msg.data)).
-				WithStaticFooter(race.RaceName + " - " + race.Date + " - Press Enter to view driver details")
 		}
+		rows := generateRows(msg.data)
+		m.table.SetHeight(len(rows))
+		m.table.SetRows(rows)
 	}
 
-	return m, tea.Batch(cmds...)
+	m.table, cmd = m.table.Update(msg)
+
+	return m, cmd
 }
 
 func (m model) View() string {
@@ -84,18 +69,16 @@ func fetchRows() tea.Msg {
 }
 
 func generateRows(results *api.RaceTable) []table.Row {
-	race := results.Races[0]
-	var rows []table.Row
-	for _, result := range race.Results {
-		rows = append(rows, table.NewRow(table.RowData{
-			columnKeyPosition: result.PositionText,
-			columnKeyDriver:   result.Number + " " + result.Driver.GivenName + " " + result.Driver.FamilyName,
-			columnKeyTeam:     result.Constructor.Name,
-			columnKeyStatus:   result.Status,
-			columnsKeyTime:    result.Time.Time,
-			columnKeyPoints:   result.Points,
-		}))
+	rows := make([]table.Row, len(results.Races[0].Results))
+	for i, result := range results.Races[0].Results {
+		rows[i] = table.Row{
+			result.PositionText,
+			result.Number + " " + result.Driver.GivenName + " " + result.Driver.FamilyName,
+			result.Constructor.Name,
+			result.Status,
+			result.Time.Time,
+			result.Points,
+		}
 	}
-
 	return rows
 }

@@ -39,8 +39,8 @@ func New(styles ui.Styles) *tea.Program {
 func (m *model) Init() tea.Cmd {
 	m.pageModels = map[Page]page.Model{
 		pageResults: results.New(m.styles),
-		pageWCC:     wcc.New(),
-		pageWDC:     wdc.New(),
+		pageWCC:     wcc.New(m.styles),
+		pageWDC:     wdc.New(m.styles),
 	}
 
 	m.currentPage = pageResults

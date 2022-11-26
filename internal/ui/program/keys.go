@@ -37,7 +37,7 @@ var keys = keyMap{
 	),
 	WCC: key.NewBinding(
 		key.WithKeys("c"),
-		key.WithHelp("c", "constructor Standings"),
+		key.WithHelp("c", "constructor standings"),
 	),
 	WDC: key.NewBinding(
 		key.WithKeys("d"),
