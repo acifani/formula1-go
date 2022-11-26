@@ -4,6 +4,7 @@ import (
 	"github.com/acifani/formula1-go/internal/ui"
 	"github.com/acifani/formula1-go/internal/ui/page"
 	"github.com/acifani/formula1-go/internal/ui/results"
+	"github.com/acifani/formula1-go/internal/ui/season"
 	"github.com/acifani/formula1-go/internal/ui/wcc"
 	"github.com/acifani/formula1-go/internal/ui/wdc"
 	"github.com/charmbracelet/bubbles/help"
@@ -15,6 +16,7 @@ const (
 	pageResults = iota
 	pageWCC     = iota
 	pageWDC     = iota
+	pageSeason  = iota
 )
 
 type Page = int8
@@ -41,6 +43,7 @@ func (m *model) Init() tea.Cmd {
 		pageResults: results.New(m.styles),
 		pageWCC:     wcc.New(m.styles),
 		pageWDC:     wdc.New(m.styles),
+		pageSeason:  season.New(m.styles),
 	}
 
 	m.currentPage = pageResults
@@ -67,6 +70,9 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmds = append(cmds, m.getCurrentPageModel().Init())
 		case key.Matches(msg, m.keys.WCC):
 			m.currentPage = pageWCC
+			cmds = append(cmds, m.getCurrentPageModel().Init())
+		case key.Matches(msg, m.keys.Season):
+			m.currentPage = pageSeason
 			cmds = append(cmds, m.getCurrentPageModel().Init())
 		}
 	}

@@ -21,7 +21,7 @@ type Styles struct {
 func NewStyles() Styles {
 	s := Styles{}
 	s.Wrap = lipgloss.NewStyle().Width(58)
-	s.Paragraph = s.Wrap.Copy().Margin(1, 0, 0, 2)
+	s.Paragraph = s.Wrap.Copy().Margin(1, 0, 1, 2)
 	s.Keyword = lipgloss.NewStyle().Foreground(green)
 
 	return s
