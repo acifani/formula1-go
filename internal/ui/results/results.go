@@ -6,10 +6,11 @@ import (
 
 	"github.com/acifani/formula1-go/internal/ui"
 	"github.com/acifani/formula1-go/internal/ui/driver"
+	"github.com/acifani/formula1-go/internal/ui/page"
 	"github.com/acifani/formula1-go/pkg/api"
 )
 
-type Model struct {
+type model struct {
 	styles ui.Styles
 	err    error
 	table  table.Model
@@ -30,20 +31,19 @@ const (
 	columnKeyDriverID = "driverId"
 )
 
-func New(styles ui.Styles) Model {
-	return Model{styles: styles}
+func New(styles ui.Styles) page.Model {
+	return &model{styles: styles}
 }
 
-func (m Model) Init() tea.Cmd {
+func (m model) Init() tea.Cmd {
 	return fetchRows
 }
 
-func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
+func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 	var (
 		cmd  tea.Cmd
 		cmds []tea.Cmd
 	)
-
 	m.table, cmd = m.table.Update(msg)
 	cmds = append(cmds, cmd)
 
@@ -56,7 +56,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 			row := m.table.HighlightedRow()
 			cmds = append(
 				cmds,
-				driver.Init(row.Data[columnKeyDriverID].(string)),
+				driver.LoadDriver(row.Data[columnKeyDriverID].(string)),
 			)
 		}
 	case fetchDone:
@@ -83,7 +83,7 @@ func (m Model) Update(msg tea.Msg) (Model, tea.Cmd) {
 	return m, tea.Batch(cmds...)
 }
 
-func (m Model) View() string {
+func (m model) View() string {
 	if m.err != nil {
 		return m.styles.Paragraph.Render(m.err.Error())
 	}
