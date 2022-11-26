@@ -2,17 +2,19 @@ package program
 
 import (
 	"github.com/acifani/formula1-go/internal/ui"
-	"github.com/acifani/formula1-go/internal/ui/driver"
 	"github.com/acifani/formula1-go/internal/ui/page"
 	"github.com/acifani/formula1-go/internal/ui/results"
+	"github.com/acifani/formula1-go/internal/ui/wcc"
+	"github.com/acifani/formula1-go/internal/ui/wdc"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 )
 
 const (
-	pageResults    = iota
-	pageDriverInfo = iota
+	pageResults = iota
+	pageWCC     = iota
+	pageWDC     = iota
 )
 
 type Page = int8
@@ -36,8 +38,9 @@ func New(styles ui.Styles) *tea.Program {
 
 func (m *model) Init() tea.Cmd {
 	m.pageModels = map[Page]page.Model{
-		pageResults:    results.New(m.styles),
-		pageDriverInfo: driver.New(),
+		pageResults: results.New(m.styles),
+		pageWCC:     wcc.New(),
+		pageWDC:     wdc.New(),
 	}
 
 	m.currentPage = pageResults
@@ -59,9 +62,13 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.help.ShowAll = !m.help.ShowAll
 		case key.Matches(msg, m.keys.Quit):
 			cmds = append(cmds, tea.Quit)
+		case key.Matches(msg, m.keys.WDC):
+			m.currentPage = pageWDC
+			cmds = append(cmds, m.getCurrentPageModel().Init())
+		case key.Matches(msg, m.keys.WCC):
+			m.currentPage = pageWCC
+			cmds = append(cmds, m.getCurrentPageModel().Init())
 		}
-	case driver.DriverLoadedMsg:
-		m.currentPage = pageDriverInfo
 	}
 
 	currentPageModel := m.getCurrentPageModel()

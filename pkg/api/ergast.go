@@ -5,32 +5,45 @@ import (
 	"net/http"
 )
 
-func GetLatestRaceResult() (*RaceTable, error) {
-	res, err := http.Get("https://ergast.com/api/f1/current/last/results.json")
-	if err != nil {
-		return nil, err
-	}
-	defer res.Body.Close()
+const baseURL = "http://ergast.com/api/f1"
 
+func GetLatestRaceResult() (*RaceTable, error) {
 	result := RaceResultResponse{}
-	err = json.NewDecoder(res.Body).Decode(&result)
+	err := apiCall("/current/last/results.json", &result)
 	if err != nil {
 		return nil, err
 	}
 	return &result.MRData.RaceTable, nil
 }
 
-func GetDriverInfo(id string) (*Driver, error) {
-	res, err := http.Get("https://ergast.com/api/f1/drivers/" + id + ".json")
+func GetCurrentDriverStandings() (*DriverStandingsTable, error) {
+	result := DriverStandingsResponse{}
+	err := apiCall("/current/driverStandings.json", &result)
 	if err != nil {
 		return nil, err
+	}
+	return &result.MRData.StandingsTable, nil
+}
+
+func GetCurrentConstructorStandings() (*ConstructorStandingsTable, error) {
+	result := ConstructorStandingsResponse{}
+	err := apiCall("/current/constructorStandings.json", &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result.MRData.StandingsTable, nil
+}
+
+func apiCall(url string, v interface{}) error {
+	res, err := http.Get(baseURL + url)
+	if err != nil {
+		return err
 	}
 	defer res.Body.Close()
 
-	result := DriverInfo{}
-	err = json.NewDecoder(res.Body).Decode(&result)
+	err = json.NewDecoder(res.Body).Decode(v)
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return &result.MRData.DriverTable.Drivers[0], nil
+	return nil
 }

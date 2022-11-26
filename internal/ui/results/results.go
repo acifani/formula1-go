@@ -5,7 +5,6 @@ import (
 	"github.com/evertras/bubble-table/table"
 
 	"github.com/acifani/formula1-go/internal/ui"
-	"github.com/acifani/formula1-go/internal/ui/driver"
 	"github.com/acifani/formula1-go/internal/ui/page"
 	"github.com/acifani/formula1-go/pkg/api"
 )
@@ -48,17 +47,6 @@ func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 	cmds = append(cmds, cmd)
 
 	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		switch msg.Type {
-		case tea.KeyCtrlC, tea.KeyEsc:
-			cmds = append(cmds, tea.Quit)
-		case tea.KeyEnter:
-			row := m.table.HighlightedRow()
-			cmds = append(
-				cmds,
-				driver.LoadDriver(row.Data[columnKeyDriverID].(string)),
-			)
-		}
 	case fetchDone:
 		if msg.err != nil {
 			m.err = msg.err
@@ -75,7 +63,6 @@ func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 
 			m.table = table.New(columns).
 				WithRows(generateRows(msg.data)).
-				Focused(true).
 				WithStaticFooter(race.RaceName + " - " + race.Date + " - Press Enter to view driver details")
 		}
 	}
@@ -101,15 +88,12 @@ func generateRows(results *api.RaceTable) []table.Row {
 	var rows []table.Row
 	for _, result := range race.Results {
 		rows = append(rows, table.NewRow(table.RowData{
-			columnKeyPosition: result.Position,
+			columnKeyPosition: result.PositionText,
 			columnKeyDriver:   result.Number + " " + result.Driver.GivenName + " " + result.Driver.FamilyName,
 			columnKeyTeam:     result.Constructor.Name,
 			columnKeyStatus:   result.Status,
 			columnsKeyTime:    result.Time.Time,
 			columnKeyPoints:   result.Points,
-
-			// Metadata
-			columnKeyDriverID: result.Driver.DriverID,
 		}))
 	}
 
