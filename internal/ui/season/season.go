@@ -5,6 +5,7 @@ import (
 
 	"github.com/acifani/formula1-go/internal/ui"
 	"github.com/acifani/formula1-go/internal/ui/page"
+	"github.com/acifani/formula1-go/internal/ui/results"
 	"github.com/acifani/formula1-go/pkg/api"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
@@ -45,6 +46,13 @@ func (m model) Init() tea.Cmd {
 func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "enter":
+			row := m.table.SelectedRow()
+			return m, results.LoadResults(row[0], row[1])
+		}
+
 	case fetchDone:
 		if msg.err != nil {
 			m.err = msg.err

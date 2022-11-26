@@ -14,10 +14,12 @@ type model struct {
 	err    error
 }
 
-type fetchDone struct {
+type LoadDone struct {
 	err  error
 	data *api.RaceTable
 }
+
+type BackMsg struct{}
 
 func New(styles ui.Styles) page.Model {
 	columns := []table.Column{
@@ -41,7 +43,12 @@ func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 	var cmd tea.Cmd
 
 	switch msg := msg.(type) {
-	case fetchDone:
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "esc":
+			return m, backMsg
+		}
+	case LoadDone:
 		if msg.err != nil {
 			m.err = msg.err
 		}
@@ -65,7 +72,14 @@ func (m model) View() string {
 
 func fetchRows() tea.Msg {
 	results, err := api.GetLatestRaceResult()
-	return fetchDone{data: results, err: err}
+	return LoadDone{data: results, err: err}
+}
+
+func LoadResults(year, round string) tea.Cmd {
+	return func() tea.Msg {
+		results, err := api.GetRaceResult(year, round)
+		return LoadDone{data: results, err: err}
+	}
 }
 
 func generateRows(results *api.RaceTable) []table.Row {
@@ -81,4 +95,8 @@ func generateRows(results *api.RaceTable) []table.Row {
 		}
 	}
 	return rows
+}
+
+func backMsg() tea.Msg {
+	return BackMsg{}
 }

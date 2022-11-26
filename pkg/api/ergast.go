@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 )
 
@@ -37,6 +38,15 @@ func GetCurrentConstructorStandings() (*ConstructorStandingsTable, error) {
 func GetCurrentSeasonSchedule() (*ScheduleTable, error) {
 	result := ScheduleResponse{}
 	err := apiCall("/current.json", &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result.MRData.RaceTable, nil
+}
+
+func GetRaceResult(year, round string) (*RaceTable, error) {
+	result := RaceResultResponse{}
+	err := apiCall(fmt.Sprintf("/%s/%s/results.json", year, round), &result)
 	if err != nil {
 		return nil, err
 	}
