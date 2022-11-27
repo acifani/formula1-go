@@ -13,10 +13,10 @@ import (
 )
 
 const (
-	pageResults = iota
-	pageWCC     = iota
-	pageWDC     = iota
-	pageSeason  = iota
+	PageResults = iota
+	PageWCC     = iota
+	PageWDC     = iota
+	PageSeason  = iota
 )
 
 type Page = int8
@@ -29,9 +29,9 @@ type model struct {
 	styles      ui.Styles
 }
 
-func New(styles ui.Styles) *tea.Program {
+func New(styles ui.Styles, initialPage Page) *tea.Program {
 	return tea.NewProgram(&model{
-		currentPage: pageResults,
+		currentPage: initialPage,
 		help:        help.New(),
 		keys:        keys,
 		styles:      styles,
@@ -40,13 +40,11 @@ func New(styles ui.Styles) *tea.Program {
 
 func (m *model) Init() tea.Cmd {
 	m.pageModels = map[Page]page.Model{
-		pageResults: results.New(m.styles),
-		pageWCC:     wcc.New(m.styles),
-		pageWDC:     wdc.New(m.styles),
-		pageSeason:  season.New(m.styles),
+		PageResults: results.New(m.styles),
+		PageWCC:     wcc.New(m.styles),
+		PageWDC:     wdc.New(m.styles),
+		PageSeason:  season.New(m.styles),
 	}
-
-	m.currentPage = pageResults
 
 	return m.getCurrentPageModel().Init()
 }
@@ -66,19 +64,19 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keys.Quit):
 			cmds = append(cmds, tea.Quit)
 		case key.Matches(msg, m.keys.WDC):
-			m.currentPage = pageWDC
+			m.currentPage = PageWDC
 			cmds = append(cmds, m.getCurrentPageModel().Init())
 		case key.Matches(msg, m.keys.WCC):
-			m.currentPage = pageWCC
+			m.currentPage = PageWCC
 			cmds = append(cmds, m.getCurrentPageModel().Init())
 		case key.Matches(msg, m.keys.Season):
-			m.currentPage = pageSeason
+			m.currentPage = PageSeason
 			cmds = append(cmds, m.getCurrentPageModel().Init())
 		}
 	case results.LoadDone:
-		m.currentPage = pageResults
+		m.currentPage = PageResults
 	case results.BackMsg:
-		m.currentPage = pageSeason
+		m.currentPage = PageSeason
 		cmds = append(cmds, m.getCurrentPageModel().Init())
 	}
 
