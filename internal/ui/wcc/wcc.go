@@ -46,10 +46,11 @@ func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 	case fetchDone:
 		if msg.err != nil {
 			m.err = msg.err
+		} else {
+			rows := generateRows(msg.data)
+			m.table.SetHeight(len(rows))
+			m.table.SetRows(rows)
 		}
-		rows := generateRows(msg.data)
-		m.table.SetHeight(len(rows))
-		m.table.SetRows(rows)
 	}
 
 	m.table, cmd = m.table.Update(msg)

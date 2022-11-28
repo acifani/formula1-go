@@ -57,11 +57,12 @@ func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 	case LoadDone:
 		if msg.err != nil {
 			m.err = msg.err
+		} else {
+			m.raceName = msg.data.Races[0].RaceName
+			rows := generateRows(msg.data)
+			m.table.SetHeight(len(rows))
+			m.table.SetRows(rows)
 		}
-		m.raceName = msg.data.Races[0].RaceName
-		rows := generateRows(msg.data)
-		m.table.SetHeight(len(rows))
-		m.table.SetRows(rows)
 	}
 
 	m.table, cmd = m.table.Update(msg)
