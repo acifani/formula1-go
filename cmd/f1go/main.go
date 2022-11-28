@@ -16,7 +16,7 @@ var (
 
 	rootCmd = &cobra.Command{
 		Use:                   "f1go",
-		Long:                  styles.Paragraph.Render("Run without arguments for a TUI or use the sub-commands like a pro."),
+		Long:                  styles.Paragraph.Render("Formula1 CLI client for standings, schedules and results."),
 		DisableFlagsInUseLine: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			_, err := program.New(styles, program.PageResults).Run()
