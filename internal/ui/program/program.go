@@ -103,7 +103,9 @@ func (m *model) View() string {
 	if currentPageModel != nil {
 		pageTitle = currentPageModel.GetPageTitle()
 	}
-	return m.styles.Title.Render(pageTitle) + m.styles.Base.Render(currentPageView) + "\n" + helpView
+	return m.styles.Title.Render(pageTitle) +
+		m.styles.Base.Render(currentPageView) +
+		m.styles.Footer.Render(helpView)
 }
 
 func (m *model) getCurrentPageModel() page.Model {

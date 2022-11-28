@@ -12,8 +12,8 @@ var (
 )
 
 type Styles struct {
-	Wrap, Paragraph, Base, Title lipgloss.Style
-	Table, SelectableTable       table.Styles
+	Wrap, Paragraph, Base, Title, Footer lipgloss.Style
+	Table, SelectableTable               table.Styles
 }
 
 func NewStyles() Styles {
@@ -21,11 +21,12 @@ func NewStyles() Styles {
 	s.Wrap = lipgloss.NewStyle().Width(58)
 	s.Paragraph = s.Wrap.Copy().Margin(1, 0, 1, 2)
 	s.Title = lipgloss.NewStyle().Margin(1, 0, 0, 1).Padding(0, 1).Background(purple).Bold(true)
+	s.Footer = lipgloss.NewStyle().Margin(1, 0, 0, 1)
 
 	s.Base = lipgloss.NewStyle().
 		BorderStyle(lipgloss.NormalBorder()).
 		BorderForeground(borderColor).
-		Margin(1, 0)
+		Margin(1, 0, 0, 0)
 
 	s.Table = table.DefaultStyles()
 	s.Table.Header = s.Table.Header.
