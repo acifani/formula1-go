@@ -56,13 +56,13 @@ func GetRaceResult(year, round string) (*RaceTable, error) {
 func apiCall(url string, v interface{}) error {
 	res, err := http.Get(baseURL + url)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error while contacting APIs:\n%v", err)
 	}
 	defer res.Body.Close()
 
 	err = json.NewDecoder(res.Body).Decode(v)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error while reading API response:\n%v", err)
 	}
 	return nil
 }
