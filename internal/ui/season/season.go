@@ -3,12 +3,14 @@ package season
 import (
 	"time"
 
-	"github.com/acifani/formula1-go/internal/ui"
-	"github.com/acifani/formula1-go/internal/ui/page"
-	"github.com/acifani/formula1-go/internal/ui/results"
-	"github.com/acifani/formula1-go/pkg/api"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
+
+	"github.com/acifani/formula1-go/internal/ui"
+	"github.com/acifani/formula1-go/internal/ui/page"
+	"github.com/acifani/formula1-go/internal/ui/quali"
+	"github.com/acifani/formula1-go/internal/ui/results"
+	"github.com/acifani/formula1-go/pkg/api"
 )
 
 type model struct {
@@ -56,6 +58,9 @@ func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 		case "enter":
 			row := m.table.SelectedRow()
 			return m, results.LoadResults(row[0], row[1])
+		case "q":
+			row := m.table.SelectedRow()
+			return m, quali.LoadResults(row[0], row[1])
 		}
 
 	case fetchDone:

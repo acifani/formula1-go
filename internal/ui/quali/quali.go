@@ -1,4 +1,4 @@
-package results
+package quali
 
 import (
 	"github.com/charmbracelet/bubbles/table"
@@ -6,20 +6,19 @@ import (
 
 	"github.com/acifani/formula1-go/internal/ui"
 	"github.com/acifani/formula1-go/internal/ui/page"
-	"github.com/acifani/formula1-go/internal/ui/quali"
 	"github.com/acifani/formula1-go/pkg/api"
 )
 
 type model struct {
-	data   *api.RaceTable
-	table  table.Model
-	styles ui.Styles
-	err    error
+	raceName string
+	table    table.Model
+	styles   ui.Styles
+	err      error
 }
 
 type LoadDone struct {
 	err  error
-	data *api.RaceTable
+	data *api.QualifyingTable
 }
 
 type BackMsg struct{}
@@ -29,9 +28,9 @@ func New(styles ui.Styles) page.Model {
 		{Title: "#", Width: 4},
 		{Title: "Driver", Width: 25},
 		{Title: "Team", Width: 20},
-		{Title: "Status", Width: 15},
-		{Title: "Time", Width: 12},
-		{Title: "Pts", Width: 4},
+		{Title: "Q1", Width: 10},
+		{Title: "Q2", Width: 10},
+		{Title: "Q3", Width: 10},
 	}
 	t := table.New(table.WithColumns(columns))
 	t.SetStyles(styles.Table)
@@ -40,14 +39,11 @@ func New(styles ui.Styles) page.Model {
 }
 
 func (m model) GetPageTitle() string {
-	if m.data != nil {
-		return m.data.Races[0].RaceName + " results"
-	}
-	return "Race results"
+	return m.raceName + " qualifying results"
 }
 
 func (m model) Init() tea.Cmd {
-	return fetchRows
+	return nil
 }
 
 func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
@@ -58,16 +54,12 @@ func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 		switch msg.String() {
 		case "esc":
 			return m, backMsg
-		case "q":
-			if m.data != nil {
-				return m, quali.LoadResults(m.data.Season, m.data.Round)
-			}
 		}
 	case LoadDone:
 		if msg.err != nil {
 			m.err = msg.err
 		} else {
-			m.data = msg.data
+			m.raceName = msg.data.Races[0].RaceName
 			rows := generateRows(msg.data)
 			m.table.SetHeight(len(rows))
 			m.table.SetRows(rows)
@@ -87,28 +79,23 @@ func (m model) View() string {
 	return m.table.View()
 }
 
-func fetchRows() tea.Msg {
-	results, err := api.GetLatestRaceResult()
-	return LoadDone{data: results, err: err}
-}
-
 func LoadResults(year, round string) tea.Cmd {
 	return func() tea.Msg {
-		results, err := api.GetRaceResult(year, round)
+		results, err := api.GetQualifyingResult(year, round)
 		return LoadDone{data: results, err: err}
 	}
 }
 
-func generateRows(results *api.RaceTable) []table.Row {
-	rows := make([]table.Row, len(results.Races[0].Results))
-	for i, result := range results.Races[0].Results {
+func generateRows(results *api.QualifyingTable) []table.Row {
+	rows := make([]table.Row, len(results.Races[0].QualifyingResults))
+	for i, result := range results.Races[0].QualifyingResults {
 		rows[i] = table.Row{
-			result.PositionText,
+			result.Position,
 			result.Number + " " + result.Driver.GivenName + " " + result.Driver.FamilyName,
 			result.Constructor.Name,
-			result.Status,
-			result.Time.Time,
-			result.Points,
+			result.Q1,
+			result.Q2,
+			result.Q3,
 		}
 	}
 	return rows

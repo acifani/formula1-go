@@ -11,16 +11,17 @@ type keyMap struct {
 	WDC    key.Binding
 	WCC    key.Binding
 	Season key.Binding
+	Quali  key.Binding
 	Back   key.Binding
 }
 
 func (k keyMap) ShortHelp() []key.Binding {
-	return []key.Binding{k.Season, k.WDC, k.WCC, k.Help, k.Quit}
+	return []key.Binding{k.Season, k.WDC, k.WCC, k.Quali, k.Help, k.Quit}
 }
 
 func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		{k.Season, k.WDC, k.WCC},
+		{k.Season, k.WDC, k.WCC, k.Quali},
 		{k.Up, k.Down, k.Select},
 		{k.Help, k.Quit, k.Back},
 	}
@@ -37,23 +38,27 @@ var keys = keyMap{
 	),
 	WCC: key.NewBinding(
 		key.WithKeys("c"),
-		key.WithHelp("c", "constructor standings"),
+		key.WithHelp("c", "wcc"),
 	),
 	WDC: key.NewBinding(
 		key.WithKeys("d"),
-		key.WithHelp("d", "driver standings"),
+		key.WithHelp("d", "wdc"),
 	),
 	Season: key.NewBinding(
 		key.WithKeys("s"),
-		key.WithHelp("s", "current season"),
+		key.WithHelp("s", "schedule"),
+	),
+	Quali: key.NewBinding(
+		key.WithKeys("q"),
+		key.WithHelp("q", "qualifying"),
 	),
 	Help: key.NewBinding(
 		key.WithKeys("?"),
 		key.WithHelp("?", "toggle help"),
 	),
 	Quit: key.NewBinding(
-		key.WithKeys("q", "ctrl+c"),
-		key.WithHelp("q", "quit"),
+		key.WithKeys("ctrl+c"),
+		key.WithHelp("ctrl+c", "quit"),
 	),
 	Select: key.NewBinding(
 		key.WithKeys("enter"),

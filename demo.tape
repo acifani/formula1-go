@@ -18,5 +18,8 @@ Sleep 3s
 Down@500ms 3
 Sleep 1.5s
 Enter
+Sleep 5s
+
+Type "q"
 
 Sleep 5s

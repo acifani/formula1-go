@@ -1,15 +1,17 @@
 package program
 
 import (
+	"github.com/charmbracelet/bubbles/help"
+	"github.com/charmbracelet/bubbles/key"
+	tea "github.com/charmbracelet/bubbletea"
+
 	"github.com/acifani/formula1-go/internal/ui"
 	"github.com/acifani/formula1-go/internal/ui/page"
+	"github.com/acifani/formula1-go/internal/ui/quali"
 	"github.com/acifani/formula1-go/internal/ui/results"
 	"github.com/acifani/formula1-go/internal/ui/season"
 	"github.com/acifani/formula1-go/internal/ui/wcc"
 	"github.com/acifani/formula1-go/internal/ui/wdc"
-	"github.com/charmbracelet/bubbles/help"
-	"github.com/charmbracelet/bubbles/key"
-	tea "github.com/charmbracelet/bubbletea"
 )
 
 const (
@@ -17,6 +19,7 @@ const (
 	PageWCC     = iota
 	PageWDC     = iota
 	PageSeason  = iota
+	PageQuali   = iota
 )
 
 type Page = int8
@@ -44,6 +47,7 @@ func (m *model) Init() tea.Cmd {
 		PageWCC:     wcc.New(m.styles),
 		PageWDC:     wdc.New(m.styles),
 		PageSeason:  season.New(m.styles),
+		PageQuali:   quali.New(m.styles),
 	}
 
 	return m.getCurrentPageModel().Init()
@@ -75,7 +79,10 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case results.LoadDone:
 		m.currentPage = PageResults
+	case quali.LoadDone:
+		m.currentPage = PageQuali
 	case results.BackMsg:
+	case quali.BackMsg:
 		m.currentPage = PageSeason
 		cmds = append(cmds, m.getCurrentPageModel().Init())
 	}

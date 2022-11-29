@@ -10,6 +10,7 @@
 - WDC standings
 - Season schedule
 - Race results
+- Qualifying results
 
 ## Install
 
@@ -36,3 +37,5 @@ By default, it will show the latest race results. You can then navigate the appl
 - `s` - Season schedule
 - `d` - WDC standings
 - `c` - WCC standings
+
+When viewing the season schedule or a specific race, you can type `q` to view the qualifying results.

@@ -204,3 +204,62 @@ type ScheduleTable struct {
 		} `json:"Sprint,omitempty"`
 	} `json:"Races"`
 }
+
+type QualifyingResponse struct {
+	MRData struct {
+		Xmlns     string          `json:"xmlns"`
+		Series    string          `json:"series"`
+		URL       string          `json:"url"`
+		Limit     string          `json:"limit"`
+		Offset    string          `json:"offset"`
+		Total     string          `json:"total"`
+		RaceTable QualifyingTable `json:"RaceTable"`
+	} `json:"MRData"`
+}
+
+type QualifyingTable struct {
+	Season string `json:"season"`
+	Round  string `json:"round"`
+	Races  []struct {
+		Season   string `json:"season"`
+		Round    string `json:"round"`
+		URL      string `json:"url"`
+		RaceName string `json:"raceName"`
+		Circuit  struct {
+			CircuitID   string `json:"circuitId"`
+			URL         string `json:"url"`
+			CircuitName string `json:"circuitName"`
+			Location    struct {
+				Lat      string `json:"lat"`
+				Long     string `json:"long"`
+				Locality string `json:"locality"`
+				Country  string `json:"country"`
+			} `json:"Location"`
+		} `json:"Circuit"`
+		Date              string `json:"date"`
+		Time              string `json:"time"`
+		QualifyingResults []struct {
+			Number   string `json:"number"`
+			Position string `json:"position"`
+			Driver   struct {
+				DriverID        string `json:"driverId"`
+				PermanentNumber string `json:"permanentNumber"`
+				Code            string `json:"code"`
+				URL             string `json:"url"`
+				GivenName       string `json:"givenName"`
+				FamilyName      string `json:"familyName"`
+				DateOfBirth     string `json:"dateOfBirth"`
+				Nationality     string `json:"nationality"`
+			} `json:"Driver"`
+			Constructor struct {
+				ConstructorID string `json:"constructorId"`
+				URL           string `json:"url"`
+				Name          string `json:"name"`
+				Nationality   string `json:"nationality"`
+			} `json:"Constructor"`
+			Q1 string `json:"Q1"`
+			Q2 string `json:"Q2,omitempty"`
+			Q3 string `json:"Q3,omitempty"`
+		} `json:"QualifyingResults"`
+	} `json:"Races"`
+}
