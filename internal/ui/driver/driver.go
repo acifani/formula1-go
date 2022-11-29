@@ -1,13 +1,11 @@
-package results
+package driver
 
 import (
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/acifani/formula1-go/internal/ui"
-	"github.com/acifani/formula1-go/internal/ui/driver"
 	"github.com/acifani/formula1-go/internal/ui/page"
-	"github.com/acifani/formula1-go/internal/ui/quali"
 	"github.com/acifani/formula1-go/pkg/api"
 )
 
@@ -28,27 +26,28 @@ type BackMsg struct{}
 func New(styles ui.Styles) page.Model {
 	columns := []table.Column{
 		{Title: "#", Width: 4},
-		{Title: "Driver", Width: 25},
-		{Title: "Team", Width: 20},
-		{Title: "Status", Width: 15},
-		{Title: "Time", Width: 12},
+		{Title: "Race", Width: 25},
+		{Title: "Pos", Width: 4},
 		{Title: "Pts", Width: 4},
+		{Title: "Status", Width: 15},
 	}
-	t := table.New(table.WithColumns(columns), table.WithFocused(true))
-	t.SetStyles(styles.SelectableTable)
+	t := table.New(table.WithColumns(columns))
+	t.SetStyles(styles.Table)
 
 	return &model{table: t, styles: styles}
 }
 
 func (m model) GetPageTitle() string {
 	if m.data != nil {
-		return m.data.Races[0].RaceName + " results"
+		driver := m.data.Races[0].Results[0].Driver
+		team := m.data.Races[0].Results[0].Constructor
+		return driver.PermanentNumber + " " + driver.GivenName + " " + driver.FamilyName + " - " + team.Name
 	}
-	return "Race results"
+	return ""
 }
 
 func (m model) Init() tea.Cmd {
-	return fetchRows
+	return nil
 }
 
 func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
@@ -59,16 +58,6 @@ func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 		switch msg.String() {
 		case "esc":
 			return m, backMsg
-		case "q":
-			if m.data != nil {
-				return m, quali.LoadResults(m.data.Season, m.data.Round)
-			}
-		case "enter":
-			if m.data != nil {
-				idx := m.table.Cursor()
-				driverID := m.data.Races[0].Results[idx].Driver.DriverID
-				return m, driver.LoadResults(m.data.Season, driverID)
-			}
 		}
 	case LoadDone:
 		if msg.err != nil {
@@ -94,28 +83,22 @@ func (m model) View() string {
 	return m.table.View()
 }
 
-func fetchRows() tea.Msg {
-	results, err := api.GetLatestRaceResult()
-	return LoadDone{data: results, err: err}
-}
-
-func LoadResults(year, round string) tea.Cmd {
+func LoadResults(year, driverID string) tea.Cmd {
 	return func() tea.Msg {
-		results, err := api.GetRaceResult(year, round)
+		results, err := api.GetDriverRaceResults(year, driverID)
 		return LoadDone{data: results, err: err}
 	}
 }
 
-func generateRows(results *api.RaceTable) []table.Row {
-	rows := make([]table.Row, len(results.Races[0].Results))
-	for i, result := range results.Races[0].Results {
+func generateRows(data *api.RaceTable) []table.Row {
+	rows := make([]table.Row, len(data.Races))
+	for i, race := range data.Races {
 		rows[i] = table.Row{
-			result.PositionText,
-			result.Number + " " + result.Driver.GivenName + " " + result.Driver.FamilyName,
-			result.Constructor.Name,
-			result.Status,
-			result.Time.Time,
-			result.Points,
+			race.Round,
+			race.RaceName,
+			race.Results[0].PositionText,
+			race.Results[0].Points,
+			race.Results[0].Status,
 		}
 	}
 	return rows

@@ -62,6 +62,15 @@ func GetQualifyingResult(year, round string) (*QualifyingTable, error) {
 	return &result.MRData.RaceTable, nil
 }
 
+func GetDriverRaceResults(year, driverID string) (*RaceTable, error) {
+	result := RaceResultResponse{}
+	err := apiCall(fmt.Sprintf("/%s/drivers/%s/results.json", year, driverID), &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result.MRData.RaceTable, nil
+}
+
 func apiCall(url string, v interface{}) error {
 	res, err := http.Get(baseURL + url)
 	if err != nil {

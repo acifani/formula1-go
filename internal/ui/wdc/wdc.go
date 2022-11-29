@@ -1,14 +1,17 @@
 package wdc
 
 import (
-	"github.com/acifani/formula1-go/internal/ui"
-	"github.com/acifani/formula1-go/internal/ui/page"
-	"github.com/acifani/formula1-go/pkg/api"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
+
+	"github.com/acifani/formula1-go/internal/ui"
+	"github.com/acifani/formula1-go/internal/ui/driver"
+	"github.com/acifani/formula1-go/internal/ui/page"
+	"github.com/acifani/formula1-go/pkg/api"
 )
 
 type model struct {
+	data   *api.DriverStandingsTable
 	table  table.Model
 	styles ui.Styles
 	err    error
@@ -27,8 +30,8 @@ func New(styles ui.Styles) page.Model {
 		{Title: "Pts", Width: 4},
 		{Title: "Wins", Width: 4},
 	}
-	t := table.New(table.WithColumns(columns))
-	t.SetStyles(styles.Table)
+	t := table.New(table.WithColumns(columns), table.WithFocused(true))
+	t.SetStyles(styles.SelectableTable)
 
 	return &model{table: t, styles: styles}
 }
@@ -44,10 +47,20 @@ func (m model) Init() tea.Cmd {
 func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 	var cmd tea.Cmd
 	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch msg.String() {
+		case "enter":
+			if m.data != nil {
+				idx := m.table.Cursor()
+				driverID := m.data.StandingsLists[0].DriverStandings[idx].Driver.DriverID
+				return m, driver.LoadResults(m.data.Season, driverID)
+			}
+		}
 	case fetchDone:
 		if msg.err != nil {
 			m.err = msg.err
 		} else {
+			m.data = msg.data
 			rows := generateRows(msg.data)
 			m.table.SetHeight(len(rows))
 			m.table.SetRows(rows)

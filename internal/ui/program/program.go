@@ -6,6 +6,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 
 	"github.com/acifani/formula1-go/internal/ui"
+	"github.com/acifani/formula1-go/internal/ui/driver"
 	"github.com/acifani/formula1-go/internal/ui/page"
 	"github.com/acifani/formula1-go/internal/ui/quali"
 	"github.com/acifani/formula1-go/internal/ui/results"
@@ -20,6 +21,7 @@ const (
 	PageWDC     = iota
 	PageSeason  = iota
 	PageQuali   = iota
+	PageDriver  = iota
 )
 
 type Page = int8
@@ -48,6 +50,7 @@ func (m *model) Init() tea.Cmd {
 		PageWDC:     wdc.New(m.styles),
 		PageSeason:  season.New(m.styles),
 		PageQuali:   quali.New(m.styles),
+		PageDriver:  driver.New(m.styles),
 	}
 
 	return m.getCurrentPageModel().Init()
@@ -81,9 +84,13 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.currentPage = PageResults
 	case quali.LoadDone:
 		m.currentPage = PageQuali
+	case driver.LoadDone:
+		m.currentPage = PageDriver
 	case results.BackMsg, quali.BackMsg:
 		m.currentPage = PageSeason
 		cmds = append(cmds, m.getCurrentPageModel().Init())
+	case driver.BackMsg:
+		m.currentPage = PageResults
 	}
 
 	currentPageModel := m.getCurrentPageModel()

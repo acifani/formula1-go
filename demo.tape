@@ -9,6 +9,11 @@ Sleep 500ms
 Enter
 Sleep 3s
 
+Down@500ms 4
+Sleep 1.5s
+Enter
+Sleep 5s
+
 Type "c"
 Sleep 3s
 

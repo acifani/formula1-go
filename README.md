@@ -11,6 +11,7 @@
 - Season schedule
 - Race results
 - Qualifying results
+- Driver results
 
 ## Install
 
