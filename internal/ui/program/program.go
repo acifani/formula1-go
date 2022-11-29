@@ -81,8 +81,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.currentPage = PageResults
 	case quali.LoadDone:
 		m.currentPage = PageQuali
-	case results.BackMsg:
-	case quali.BackMsg:
+	case results.BackMsg, quali.BackMsg:
 		m.currentPage = PageSeason
 		cmds = append(cmds, m.getCurrentPageModel().Init())
 	}
