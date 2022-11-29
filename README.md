@@ -14,6 +14,18 @@
 
 ## Install
 
+### Homebrew
+
+```shell
+brew install acifani/tap/formula1-go
+```
+
+### Go
+
+```shell
+go install github.com/acifani/formula1-go/cmd/f1go
+```
+
 ### Binary
 
 Binaries are available for MacOS, Windows, and Linux for both amd64 and arm64 architectures.
@@ -21,12 +33,6 @@ You can download them from the [release tab](https://github.com/acifani/formula1
 
 If you want to be able to run the `f1go` command from anywhere, you will need to either
 add the binary directory to your `PATH` or move the binary in a location that is already configured.
-
-### Go
-
-```shell
-$ go install github.com/acifani/formula1-go/cmd/f1go
-```
 
 ## Usage
 
