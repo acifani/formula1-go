@@ -14,6 +14,7 @@ import (
 )
 
 type model struct {
+	year   string
 	table  table.Model
 	styles ui.Styles
 	err    error
@@ -26,7 +27,6 @@ type fetchDone struct {
 
 func New(styles ui.Styles) page.Model {
 	columns := []table.Column{
-		{Title: "Year", Width: 0},
 		{Title: "#", Width: 2},
 		{Title: "Race", Width: 25},
 		{Title: "Circuit", Width: 25},
@@ -57,16 +57,17 @@ func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 		switch msg.String() {
 		case "enter":
 			row := m.table.SelectedRow()
-			return m, results.LoadResults(row[0], row[1])
+			return m, results.LoadResults(m.year, row[0])
 		case "q":
 			row := m.table.SelectedRow()
-			return m, quali.LoadResults(row[0], row[1])
+			return m, quali.LoadResults(m.year, row[0])
 		}
 
 	case fetchDone:
 		if msg.err != nil {
 			m.err = msg.err
 		} else {
+			m.year = msg.data.Season
 			rows := generateRows(msg.data)
 			m.table.SetHeight(len(rows))
 			m.table.SetRows(rows)
@@ -95,7 +96,6 @@ func generateRows(schedule *api.ScheduleTable) []table.Row {
 	rows := make([]table.Row, len(schedule.Races))
 	for i, race := range schedule.Races {
 		rows[i] = table.Row{
-			schedule.Season,
 			race.Round,
 			race.RaceName,
 			race.Circuit.Location.Locality + ", " + race.Circuit.Location.Country,
