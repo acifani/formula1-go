@@ -20,7 +20,7 @@ brews:
       name: homebrew-tap
     folder: Formula
     homepage: https://github.com/acifani/formula1-go
-    description: Command line application to show and display Formula1 schedules, standings, and results.
+    description: Command-line application to show Formula1 schedules, standings, and results
     license: MIT
     test: |
-      system "#{bin}/f1go version"
+      system "#{bin}/f1go", "version"
