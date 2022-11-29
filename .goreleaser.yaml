@@ -1,5 +1,6 @@
 builds:
   - main: ./cmd/f1go
+    binary: f1go
     goos:
       - linux
       - darwin
@@ -12,3 +13,14 @@ archives:
   - format_overrides:
       - goos: windows
         format: zip
+
+brews:
+  - tap:
+      owner: acifani
+      name: homebrew-tap
+    folder: Formula
+    homepage: https://github.com/acifani/formula1-go
+    description: Command line application to show and display Formula1 schedules, standings, and results.
+    license: MIT
+    test: |
+      system "#{bin}/f1go version"
