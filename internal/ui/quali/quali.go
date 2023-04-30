@@ -82,7 +82,11 @@ func (m model) View() string {
 func LoadResults(year, round string) tea.Cmd {
 	return func() tea.Msg {
 		results, err := api.GetQualifyingResult(year, round)
-		return LoadDone{data: results, err: err}
+		if len(results.Races) > 0 {
+			return LoadDone{data: results, err: err}
+		}
+
+		return nil
 	}
 }
 
