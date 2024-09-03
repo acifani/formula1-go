@@ -69,7 +69,7 @@ func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 		} else {
 			m.year = msg.data.Season
 			rows := generateRows(msg.data)
-			m.table.SetHeight(len(rows))
+			m.table.SetHeight(len(rows) + 2)
 			m.table.SetRows(rows)
 		}
 	}

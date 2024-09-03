@@ -48,7 +48,7 @@ func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 			m.err = msg.err
 		} else {
 			rows := generateRows(msg.data)
-			m.table.SetHeight(len(rows))
+			m.table.SetHeight(len(rows) + 2)
 			m.table.SetRows(rows)
 		}
 	}
