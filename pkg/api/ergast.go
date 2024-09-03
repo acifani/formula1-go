@@ -4,13 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 )
 
-const baseURL = "http://ergast.com/api/f1"
+const baseURL = "https://api.jolpi.ca/ergast/f1"
+
+var currentYear = time.Now().Year()
 
 func GetLatestRaceResult() (*RaceTable, error) {
 	result := RaceResultResponse{}
-	err := apiCall("/current/last/results.json", &result)
+	err := apiCall(fmt.Sprintf("/%d/last/results", currentYear), &result)
 	if err != nil {
 		return nil, err
 	}
@@ -19,7 +22,7 @@ func GetLatestRaceResult() (*RaceTable, error) {
 
 func GetCurrentDriverStandings() (*DriverStandingsTable, error) {
 	result := DriverStandingsResponse{}
-	err := apiCall("/current/driverStandings.json", &result)
+	err := apiCall(fmt.Sprintf("/%d/driverstandings", currentYear), &result)
 	if err != nil {
 		return nil, err
 	}
@@ -28,7 +31,7 @@ func GetCurrentDriverStandings() (*DriverStandingsTable, error) {
 
 func GetCurrentConstructorStandings() (*ConstructorStandingsTable, error) {
 	result := ConstructorStandingsResponse{}
-	err := apiCall("/current/constructorStandings.json", &result)
+	err := apiCall(fmt.Sprintf("/%d/constructorstandings", currentYear), &result)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +40,7 @@ func GetCurrentConstructorStandings() (*ConstructorStandingsTable, error) {
 
 func GetCurrentSeasonSchedule() (*ScheduleTable, error) {
 	result := ScheduleResponse{}
-	err := apiCall("/current.json", &result)
+	err := apiCall("/current", &result)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +49,7 @@ func GetCurrentSeasonSchedule() (*ScheduleTable, error) {
 
 func GetRaceResult(year, round string) (*RaceTable, error) {
 	result := RaceResultResponse{}
-	err := apiCall(fmt.Sprintf("/%s/%s/results.json", year, round), &result)
+	err := apiCall(fmt.Sprintf("/%s/%s/results", year, round), &result)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +58,7 @@ func GetRaceResult(year, round string) (*RaceTable, error) {
 
 func GetQualifyingResult(year, round string) (*QualifyingTable, error) {
 	result := QualifyingResponse{}
-	err := apiCall(fmt.Sprintf("/%s/%s/qualifying.json", year, round), &result)
+	err := apiCall(fmt.Sprintf("/%s/%s/qualifying", year, round), &result)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +67,7 @@ func GetQualifyingResult(year, round string) (*QualifyingTable, error) {
 
 func GetDriverRaceResults(year, driverID string) (*RaceTable, error) {
 	result := RaceResultResponse{}
-	err := apiCall(fmt.Sprintf("/%s/drivers/%s/results.json", year, driverID), &result)
+	err := apiCall(fmt.Sprintf("/%s/drivers/%s/results", year, driverID), &result)
 	if err != nil {
 		return nil, err
 	}
@@ -73,6 +76,7 @@ func GetDriverRaceResults(year, driverID string) (*RaceTable, error) {
 
 func apiCall(url string, v interface{}) error {
 	res, err := http.Get(baseURL + url)
+
 	if err != nil {
 		return fmt.Errorf("Error while contacting APIs:\n%v", err)
 	}

@@ -1,6 +1,6 @@
 module github.com/acifani/formula1-go
 
-go 1.20
+go 1.23
 
 require (
 	github.com/charmbracelet/bubbles v0.16.1

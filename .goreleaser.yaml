@@ -1,3 +1,5 @@
+version: 2
+
 builds:
   - main: ./cmd/f1go
     binary: f1go
@@ -15,10 +17,10 @@ archives:
         format: zip
 
 brews:
-  - tap:
+  - repository:
       owner: acifani
       name: homebrew-tap
-    folder: Formula
+    directory: Formula
     homepage: https://github.com/acifani/formula1-go
     description: Command-line application to show Formula1 schedules, standings, and results
     license: MIT
