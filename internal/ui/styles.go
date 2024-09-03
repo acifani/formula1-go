@@ -19,7 +19,7 @@ type Styles struct {
 func NewStyles() Styles {
 	s := Styles{}
 	s.Wrap = lipgloss.NewStyle().Width(58)
-	s.Paragraph = s.Wrap.Copy().Margin(1, 0, 1, 2)
+	s.Paragraph = s.Wrap.Margin(1, 0, 1, 2)
 	s.Title = lipgloss.NewStyle().Margin(1, 0, 0, 1).Padding(0, 1).Background(purple).Bold(true)
 	s.Footer = lipgloss.NewStyle().Margin(1, 0, 0, 1)
 
@@ -39,7 +39,7 @@ func NewStyles() Styles {
 		Bold(false)
 
 	s.SelectableTable = s.Table
-	s.SelectableTable.Selected = s.SelectableTable.Selected.Copy().
+	s.SelectableTable.Selected = s.SelectableTable.Selected.
 		Foreground(cream).
 		Background(purple)
 
