@@ -41,7 +41,7 @@ func New(styles ui.Styles) page.Model {
 }
 
 func (m model) GetPageTitle() string {
-	if m.data != nil {
+	if m.data != nil && len(m.data.Races) > 0 {
 		return m.data.Races[0].RaceName + " results"
 	}
 	return "Race results"
