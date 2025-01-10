@@ -111,6 +111,10 @@ func LoadResults(year, round string) tea.Cmd {
 }
 
 func generateRows(results *api.RaceTable) []table.Row {
+	if len(results.Races) == 0 {
+		return nil
+	}
+
 	rows := make([]table.Row, len(results.Races[0].Results))
 	for i, result := range results.Races[0].Results {
 		rows[i] = table.Row{

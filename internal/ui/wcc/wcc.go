@@ -72,6 +72,10 @@ func fetchStandings() tea.Msg {
 }
 
 func generateRows(standings *api.ConstructorStandingsTable) []table.Row {
+	if len(standings.StandingsLists) == 0 {
+		return nil
+	}
+
 	rows := make([]table.Row, len(standings.StandingsLists[0].ConstructorStandings))
 	for i, standing := range standings.StandingsLists[0].ConstructorStandings {
 		rows[i] = table.Row{

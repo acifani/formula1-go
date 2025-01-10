@@ -91,6 +91,10 @@ func LoadResults(year, round string) tea.Cmd {
 }
 
 func generateRows(results *api.QualifyingTable) []table.Row {
+	if len(results.Races) == 0 {
+		return nil
+	}
+
 	rows := make([]table.Row, len(results.Races[0].QualifyingResults))
 	for i, result := range results.Races[0].QualifyingResults {
 		rows[i] = table.Row{

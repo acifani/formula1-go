@@ -86,6 +86,10 @@ func fetchStandings() tea.Msg {
 }
 
 func generateRows(standings *api.DriverStandingsTable) []table.Row {
+	if len(standings.StandingsLists) == 0 {
+		return nil
+	}
+
 	rows := make([]table.Row, len(standings.StandingsLists[0].DriverStandings))
 	for i, standing := range standings.StandingsLists[0].DriverStandings {
 		rows[i] = table.Row{
