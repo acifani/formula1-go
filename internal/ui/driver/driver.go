@@ -39,9 +39,12 @@ func New(styles ui.Styles) page.Model {
 
 func (m model) GetPageTitle() string {
 	if m.data != nil {
-		driver := m.data.Races[0].Results[0].Driver
-		team := m.data.Races[0].Results[0].Constructor
-		return driver.PermanentNumber + " " + driver.GivenName + " " + driver.FamilyName + " - " + team.Name
+		races := len(m.data.Races)
+		if races > 0 {
+			driver := m.data.Races[races-1].Results[0].Driver
+			team := m.data.Races[races-1].Results[0].Constructor
+			return driver.PermanentNumber + " " + driver.GivenName + " " + driver.FamilyName + " - " + team.Name
+		}
 	}
 	return ""
 }

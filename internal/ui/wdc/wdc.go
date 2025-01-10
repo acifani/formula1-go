@@ -95,7 +95,7 @@ func generateRows(standings *api.DriverStandingsTable) []table.Row {
 		rows[i] = table.Row{
 			standing.PositionText,
 			standing.Driver.PermanentNumber + " " + standing.Driver.GivenName + " " + standing.Driver.FamilyName,
-			standing.Constructors[0].Name,
+			standing.Constructors[len(standing.Constructors)-1].Name,
 			standing.Points,
 			standing.Wins,
 		}
