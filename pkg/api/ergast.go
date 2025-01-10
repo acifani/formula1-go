@@ -9,11 +9,21 @@ import (
 
 const baseURL = "https://api.jolpi.ca/ergast/f1"
 
-var currentYear = time.Now().Year()
+// getCurrentSeason returns the active F1 season year
+func getCurrentSeason() int {
+	now := time.Now()
+	year := now.Year()
+
+	// F1 season typically starts in March
+	if now.Month() < time.March {
+		return year - 1
+	}
+	return year
+}
 
 func GetLatestRaceResult() (*RaceTable, error) {
 	result := RaceResultResponse{}
-	err := apiCall(fmt.Sprintf("/%d/last/results", currentYear), &result)
+	err := apiCall(fmt.Sprintf("/%d/last/results", getCurrentSeason()), &result)
 	if err != nil {
 		return nil, err
 	}
@@ -22,7 +32,7 @@ func GetLatestRaceResult() (*RaceTable, error) {
 
 func GetCurrentDriverStandings() (*DriverStandingsTable, error) {
 	result := DriverStandingsResponse{}
-	err := apiCall(fmt.Sprintf("/%d/driverstandings", currentYear), &result)
+	err := apiCall(fmt.Sprintf("/%d/driverstandings", getCurrentSeason()), &result)
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +41,7 @@ func GetCurrentDriverStandings() (*DriverStandingsTable, error) {
 
 func GetCurrentConstructorStandings() (*ConstructorStandingsTable, error) {
 	result := ConstructorStandingsResponse{}
-	err := apiCall(fmt.Sprintf("/%d/constructorstandings", currentYear), &result)
+	err := apiCall(fmt.Sprintf("/%d/constructorstandings", getCurrentSeason()), &result)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +50,7 @@ func GetCurrentConstructorStandings() (*ConstructorStandingsTable, error) {
 
 func GetCurrentSeasonSchedule() (*ScheduleTable, error) {
 	result := ScheduleResponse{}
-	err := apiCall("/current", &result)
+	err := apiCall(fmt.Sprintf("/%d", getCurrentSeason()), &result)
 	if err != nil {
 		return nil, err
 	}
