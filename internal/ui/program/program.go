@@ -71,14 +71,11 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keys.Quit):
 			cmds = append(cmds, tea.Quit)
 		case key.Matches(msg, m.keys.WDC):
-			m.currentPage = PageWDC
-			cmds = append(cmds, m.getCurrentPageModel().Init())
+			return m.switchPage(PageWDC)
 		case key.Matches(msg, m.keys.WCC):
-			m.currentPage = PageWCC
-			cmds = append(cmds, m.getCurrentPageModel().Init())
+			return m.switchPage(PageWCC)
 		case key.Matches(msg, m.keys.Season):
-			m.currentPage = PageSeason
-			cmds = append(cmds, m.getCurrentPageModel().Init())
+			return m.switchPage(PageSeason)
 		}
 	case results.LoadDone:
 		m.currentPage = PageResults
@@ -119,6 +116,13 @@ func (m *model) View() string {
 	return m.styles.Title.Render(pageTitle) +
 		m.styles.Base.Render(currentPageView) +
 		m.styles.Footer.Render(helpView)
+}
+
+// switchPage does not forward the key that triggered it: the new page's
+// table would read it as a movement key before its rows are loaded.
+func (m *model) switchPage(p Page) (tea.Model, tea.Cmd) {
+	m.currentPage = p
+	return m, m.getCurrentPageModel().Init()
 }
 
 func (m *model) getCurrentPageModel() page.Model {
