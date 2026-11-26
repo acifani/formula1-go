@@ -1,8 +1,8 @@
 package driver
 
 import (
-	"github.com/charmbracelet/bubbles/table"
-	tea "github.com/charmbracelet/bubbletea"
+	"charm.land/bubbles/v2/table"
+	tea "charm.land/bubbletea/v2"
 
 	"github.com/acifani/formula1-go/internal/ui"
 	"github.com/acifani/formula1-go/internal/ui/page"
@@ -31,8 +31,7 @@ func New(styles ui.Styles) page.Model {
 		{Title: "Pts", Width: 4},
 		{Title: "Status", Width: 15},
 	}
-	t := table.New(table.WithColumns(columns))
-	t.SetStyles(styles.Table)
+	t := ui.NewTable(columns, styles.Table)
 
 	return &model{table: t, styles: styles}
 }
@@ -57,7 +56,7 @@ func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 	var cmd tea.Cmd
 
 	switch msg := msg.(type) {
-	case tea.KeyMsg:
+	case tea.KeyPressMsg:
 		switch msg.String() {
 		case "esc":
 			return m, backMsg
@@ -68,7 +67,7 @@ func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 		} else {
 			m.data = msg.data
 			rows := generateRows(msg.data)
-			m.table.SetHeight(len(rows) + 2)
+			m.table.SetHeight(len(rows) + ui.TableHeaderHeight)
 			m.table.SetRows(rows)
 		}
 	}

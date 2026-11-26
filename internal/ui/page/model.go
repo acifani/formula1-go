@@ -1,6 +1,6 @@
 package page
 
-import tea "github.com/charmbracelet/bubbletea"
+import tea "charm.land/bubbletea/v2"
 
 type Model interface {
 	Init() tea.Cmd

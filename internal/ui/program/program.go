@@ -1,9 +1,9 @@
 package program
 
 import (
-	"github.com/charmbracelet/bubbles/help"
-	"github.com/charmbracelet/bubbles/key"
-	tea "github.com/charmbracelet/bubbletea"
+	"charm.land/bubbles/v2/help"
+	"charm.land/bubbles/v2/key"
+	tea "charm.land/bubbletea/v2"
 
 	"github.com/acifani/formula1-go/internal/ui"
 	"github.com/acifani/formula1-go/internal/ui/driver"
@@ -53,7 +53,7 @@ func (m *model) Init() tea.Cmd {
 		PageDriver:  driver.New(m.styles),
 	}
 
-	return m.getCurrentPageModel().Init()
+	return tea.Batch(tea.RequestBackgroundColor, m.getCurrentPageModel().Init())
 }
 
 func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
@@ -63,8 +63,10 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		m.help.Width = msg.Width
-	case tea.KeyMsg:
+		m.help.SetWidth(msg.Width)
+	case tea.BackgroundColorMsg:
+		m.help.Styles = help.DefaultStyles(msg.IsDark())
+	case tea.KeyPressMsg:
 		switch {
 		case key.Matches(msg, m.keys.Help):
 			m.help.ShowAll = !m.help.ShowAll
@@ -100,7 +102,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, tea.Batch(cmds...)
 }
 
-func (m *model) View() string {
+func (m *model) View() tea.View {
 	currentPageModel := m.getCurrentPageModel()
 	currentPageView := ""
 	if currentPageModel != nil {
@@ -113,9 +115,9 @@ func (m *model) View() string {
 	if currentPageModel != nil {
 		pageTitle = currentPageModel.GetPageTitle()
 	}
-	return m.styles.Title.Render(pageTitle) +
+	return tea.NewView(m.styles.Title.Render(pageTitle) +
 		m.styles.Base.Render(currentPageView) +
-		m.styles.Footer.Render(helpView)
+		m.styles.Footer.Render(helpView))
 }
 
 // switchPage does not forward the key that triggered it: the new page's

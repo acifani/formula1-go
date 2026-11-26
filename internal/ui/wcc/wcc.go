@@ -1,11 +1,11 @@
 package wcc
 
 import (
+	"charm.land/bubbles/v2/table"
+	tea "charm.land/bubbletea/v2"
 	"github.com/acifani/formula1-go/internal/ui"
 	"github.com/acifani/formula1-go/internal/ui/page"
 	"github.com/acifani/formula1-go/pkg/api"
-	"github.com/charmbracelet/bubbles/table"
-	tea "github.com/charmbracelet/bubbletea"
 )
 
 type model struct {
@@ -26,8 +26,7 @@ func New(styles ui.Styles) page.Model {
 		{Title: "Pts", Width: 4},
 		{Title: "Wins", Width: 4},
 	}
-	t := table.New(table.WithColumns(columns))
-	t.SetStyles(styles.Table)
+	t := ui.NewTable(columns, styles.Table)
 
 	return &model{table: t, styles: styles}
 }
@@ -48,7 +47,7 @@ func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 			m.err = msg.err
 		} else {
 			rows := generateRows(msg.data)
-			m.table.SetHeight(len(rows) + 2)
+			m.table.SetHeight(len(rows) + ui.TableHeaderHeight)
 			m.table.SetRows(rows)
 		}
 	}
