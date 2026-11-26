@@ -36,7 +36,7 @@ func New(styles ui.Styles) page.Model {
 		{Title: "Quali Time", Width: 20},
 		{Title: "Race Time", Width: 20},
 	}
-	t := table.New(table.WithColumns(columns), table.WithFocused(true))
+	t := table.New(table.WithColumns(columns))
 	t.SetStyles(styles.SelectableTable)
 
 	return &model{table: t, styles: styles}
@@ -71,6 +71,7 @@ func (m model) Update(msg tea.Msg) (page.Model, tea.Cmd) {
 			rows := generateRows(msg.data)
 			m.table.SetHeight(len(rows) + 2)
 			m.table.SetRows(rows)
+			m.table.Focus()
 		}
 	}
 
